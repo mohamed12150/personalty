@@ -93,7 +93,7 @@ class SettingsScreen extends StatelessWidget {
               children: [
                 IconButton(
                   onPressed: () => context.pop(),
-                  icon: Icon(Icons.arrow_forward,
+                  icon: Icon(Icons.arrow_back,
                       size: 20, color: AppColors.ink),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
@@ -330,7 +330,7 @@ class _SettingsRow extends StatelessWidget {
             const SizedBox(width: 12),
             Text(label, style: AppType.ui(size: 14, weight: FontWeight.w600)),
             const Spacer(),
-            Icon(Icons.arrow_back_ios_new,
+            Icon(Icons.arrow_forward_ios,
                 size: 12, color: AppColors.inkSoft),
           ],
         ),

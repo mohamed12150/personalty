@@ -110,7 +110,7 @@ class _PublicProfileScreenState extends State<PublicProfileScreen> {
               children: [
                 IconButton(
                   onPressed: () => context.pop(),
-                  icon: Icon(Icons.arrow_forward,
+                  icon: Icon(Icons.arrow_back,
                       size: 20, color: AppColors.ink),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
