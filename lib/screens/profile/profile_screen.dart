@@ -46,8 +46,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           .limit(20);
       if (mounted) {
         setState(() {
-          _history =
-              (response as List).map((r) => TestResult.fromJson(r)).toList();
+          _history = (response as List)
+              .map((r) => TestResult.fromJson(r))
+              .toList();
         });
       }
     } catch (e) {
@@ -61,6 +62,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.paper,
+      // يسمح للنافذة بالتمدد والتمرير بدل الفيض على الشاشات القصيرة
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(14)),
       ),
@@ -92,8 +95,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             else ...[
               _IdentityBlock(
                 profile: profile,
-                fallbackName:
-                    auth.user?.email?.split('@').first ?? 'مستخدم',
+                fallbackName: auth.user?.email?.split('@').first ?? 'مستخدم',
               ),
               const SizedBox(height: 14),
               _WalletBlock(
@@ -131,8 +133,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               else
                 for (final result in _history)
                   InkWell(
-                    onTap: () => context
-                        .push('/personality-detail?code=${result.code}'),
+                    onTap: () =>
+                        context.push('/personality-detail?code=${result.code}'),
                     child: Container(
                       decoration: BoxDecoration(
                         border: Border(
@@ -161,13 +163,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Text(
                             result.testType == 'full' ? 'كامل' : 'سريع',
                             style: AppType.ui(
-                                size: 11, color: AppColors.inkMuted),
+                              size: 11,
+                              color: AppColors.inkMuted,
+                            ),
                           ),
                           const Spacer(),
                           Text(
                             arabicDateLine(result.createdAt),
                             style: AppType.ui(
-                                size: 11, color: AppColors.inkSoft),
+                              size: 11,
+                              color: AppColors.inkSoft,
+                            ),
                           ),
                         ],
                       ),
@@ -276,7 +282,11 @@ class _IdentityBlock extends StatelessWidget {
               children: [
                 Text(
                   name,
-                  style: AppType.display(size: 21, height: 1.3, color: nameColor),
+                  style: AppType.display(
+                    size: 21,
+                    height: 1.3,
+                    color: nameColor,
+                  ),
                 ),
                 const SizedBox(height: 4),
                 if (personality != null)
@@ -308,8 +318,11 @@ class _IdentityBlock extends StatelessWidget {
           ),
           IconButton(
             onPressed: () => context.push('/profile-setup'),
-            icon: Icon(Icons.edit_outlined,
-                size: 18, color: AppColors.inkMuted),
+            icon: Icon(
+              Icons.edit_outlined,
+              size: 18,
+              color: AppColors.inkMuted,
+            ),
           ),
         ],
       ),
@@ -350,9 +363,7 @@ class _CompleteIdentityBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: AppColors.hairline),
-      ),
+      decoration: BoxDecoration(border: Border.all(color: AppColors.hairline)),
       padding: const EdgeInsets.all(16),
       child: Row(
         children: [
@@ -360,8 +371,10 @@ class _CompleteIdentityBlock extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('أكمل هويتك',
-                    style: AppType.display(size: 17, height: 1.3)),
+                Text(
+                  'أكمل هويتك',
+                  style: AppType.display(size: 17, height: 1.3),
+                ),
                 Text(
                   'اختر أفاتارك ليظهر بجانب خواطرك وتعليقاتك',
                   style: AppType.ui(size: 11.5, color: AppColors.inkMuted),
@@ -402,15 +415,16 @@ class _ColorsShopSheetState extends State<_ColorsShopSheet> {
       // اللون الجديد يظهر فوراً على خواطري وتعليقاتي القديمة
       if (mounted) {
         context.read<PostsProvider>().refreshAfterIdentityChange(
-              myType: profileProvider.profile?.personalityType,
-            );
+          myType: profileProvider.profile?.personalityType,
+        );
       }
     }
     if (mounted) {
       setState(() => _busy = false);
       if (!result.ok) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(result.message)));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(result.message)));
       }
     }
   }
@@ -421,93 +435,109 @@ class _ColorsShopSheetState extends State<_ColorsShopSheet> {
     final profile = context.watch<ProfileProvider>().profile;
 
     return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text('متجر ألوان الاسم', style: AppType.display(size: 21)),
-                const Spacer(),
-                Icon(Icons.eco, size: 16, color: AppColors.green),
-                const SizedBox(width: 4),
-                Text(
-                  arabicDigits(profile?.leaves ?? 0),
-                  style: AppType.ui(size: 13.5, weight: FontWeight.w700),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'اسمك بلونك في كل المجتمع',
-              style: AppType.ui(size: 12, color: AppColors.inkSoft),
-            ),
-            const SizedBox(height: 12),
-            const Hairline(),
-            for (final item in economy.colors)
-              Builder(builder: (context) {
-                final owned =
-                    profile?.unlockedColors.contains(item.color) ?? false;
-                final active = profile?.nameColor == item.color;
-                return Container(
-                  decoration: BoxDecoration(
-                    border:
-                        Border(bottom: BorderSide(color: AppColors.hairline)),
+      // حد أقصى 85% من الشاشة مع تمرير داخلي — لا فيض مهما صغرت الشاشة
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.sizeOf(context).height * 0.85,
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Text('متجر ألوان الاسم', style: AppType.display(size: 21)),
+                  const Spacer(),
+                  Icon(Icons.eco, size: 16, color: AppColors.green),
+                  const SizedBox(width: 4),
+                  Text(
+                    arabicDigits(profile?.leaves ?? 0),
+                    style: AppType.ui(size: 13.5, weight: FontWeight.w700),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 18,
-                        height: 18,
-                        color: AppColors.nameColor(item.color),
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        AppColors.nameColorLabel(item.color),
-                        style: AppType.ui(
-                          size: 14,
-                          weight: FontWeight.w700,
-                          color: AppColors.nameColor(item.color),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'اسمك بلونك في كل المجتمع',
+                style: AppType.ui(size: 12, color: AppColors.inkSoft),
+              ),
+              const SizedBox(height: 12),
+              const Hairline(),
+              for (final item in economy.colors)
+                Builder(
+                  builder: (context) {
+                    final owned =
+                        profile?.unlockedColors.contains(item.color) ?? false;
+                    final active = profile?.nameColor == item.color;
+                    return Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(color: AppColors.hairline),
                         ),
                       ),
-                      const Spacer(),
-                      if (active)
-                        Text('مستخدم ✓',
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 18,
+                            height: 18,
+                            color: AppColors.nameColor(item.color),
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            AppColors.nameColorLabel(item.color),
                             style: AppType.ui(
-                                size: 12, weight: FontWeight.w700))
-                      else
-                        GestureDetector(
-                          onTap: () => _buy(item.color),
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 5),
-                            decoration: BoxDecoration(
-                              color:
-                                  owned ? Colors.transparent : AppColors.ink,
-                              border: Border.all(color: AppColors.ink),
-                            ),
-                            child: Text(
-                              owned
-                                  ? 'استخدام'
-                                  : '${arabicDigits(item.price)} 🍃',
-                              style: AppType.ui(
-                                size: 11.5,
-                                weight: FontWeight.w700,
-                                color: owned
-                                    ? AppColors.ink
-                                    : AppColors.paper,
-                              ),
+                              size: 14,
+                              weight: FontWeight.w700,
+                              color: AppColors.nameColor(item.color),
                             ),
                           ),
-                        ),
-                    ],
-                  ),
-                );
-              }),
-          ],
+                          const Spacer(),
+                          if (active)
+                            Text(
+                              'مستخدم ✓',
+                              style: AppType.ui(
+                                size: 12,
+                                weight: FontWeight.w700,
+                              ),
+                            )
+                          else
+                            GestureDetector(
+                              onTap: () => _buy(item.color),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: owned
+                                      ? Colors.transparent
+                                      : AppColors.ink,
+                                  border: Border.all(color: AppColors.ink),
+                                ),
+                                child: Text(
+                                  owned
+                                      ? 'استخدام'
+                                      : '${arabicDigits(item.price)} 🍃',
+                                  style: AppType.ui(
+                                    size: 11.5,
+                                    weight: FontWeight.w700,
+                                    color: owned
+                                        ? AppColors.ink
+                                        : AppColors.paper,
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+            ],
+          ),
         ),
       ),
     );
