@@ -49,3 +49,8 @@ admin/
 
 # Local mockups
 mockups/
+
+# Release signing - NEVER commit
+android/key.properties
+*.jks
+*.keystore
